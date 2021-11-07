@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello InscriptionController!{% endblock %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block body %}
+<style>
+    
+    
+  
+</style>
+
+<div class="container loginform">
+    <div class="form-group d-flex justify-content-center">
+    <h3 class="form_title p-6">S'inscrire</h3>
+    </div>
+    {{ form_start(form) }}
+    {{ form(form) }}
+     {{ form_end(form) }}
+
+   
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LoginController!{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    
+    <div class="container loginform">
+    <div class="form-group d-flex justify-content-center">
+    <h3 class="form_title p-6">Login</h3>
+    </div>
+   
+    <form class="" action="{{ path('login') }}" method="post">
+        <label class="col-sm-1 col-form-label" for="username">Pseudo:</label>
+        <input class="col-sm-3" type="text" id="username" name="_username" value="{{ last_username }}"/>
+        <label class="col-sm-1 col-form-label" for="password">Password:</label>
+        <input class="col-sm-3" type="password" id="password" name="_password"/>
+        <button  type="submit" class="col-sm-2 btn save_btn">login</button>
+        <input type="hidden" name="_target_path" value="{{ path("index") }}"/>
+        
+
+{# <div class="p-3 mb-2 bg-primary text-white"> Je n'ai pas de compte <a href="{{ path("inscription") }}" class="text-white">S'inscrire</a></div> #}
+<audio id="audio_error" controls style="display:none">
+  <source src="{{ asset('audio/error.wav') }}" type="audio/mpeg"> Your browser does not support the audio element.
+</audio>
+
+
+
+<div style="margin-top:50px;" class="alert alert-dark" role="alert">
+  Je n'ai pas de compte  : <a href="{{ path("inscription") }}" class="alert-link">S'inscrire</a>
+  <a style="float:right;" href="{{ path("facial_login") }}" class="alert-link">Connexion faciale</a>
+
+</div>
+
+    </form>
+
+    
+{% if error %}
+        <style>
+        .loginform{box-shadow: 10px 8px 8px -1px rgba(255, 65, 113, 0.9);}
+        </style>
+        <script>
+            document.getElementById('audio_error').play();
+        </script>
+        <div style="color:red;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% else %}
+       <style>
+        .loginform{box-shadow: 10px 8px 8px -1px rgba(97,242,217,0.9);}
+        </style>
+
+       
+        
+    {% endif %}
+    </div>
+    
+    </div>
+{% endblock %}

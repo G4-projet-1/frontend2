@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceuil{% endblock %}
+
+{% block body %}  
+<style>
+.card{margin:25px;}
+img{margin-right:25px;}
+img:hover{border-bottom:1px solid #fff; cursor:pointer;}
+</style>
+<audio id="audio_enter" controls style="display:none">
+  <source src="{{ asset('audio/zoom.wav') }}" type="audio/mpeg"> Your browser does not support the audio element.
+</audio>
+ <script>
+            document.getElementById('audio_enter').play();
+        </script>
+<div class="example-wrapper">
+    <h1>Accueil</h1>
+<div class="d-flex flex-wrap">
+   {% for item in 0..20|slice(0, 20,4) %}
+   {% for class_ in 0..4 %}
+   {% if class_ == 0 %}
+     <div class="mydiv  border-indigo text-white mb-4">
+            <div class="card-header header-indigo ">Last modified : 42 seconds ago...</div>
+                <div class="card-body text-indigo ">
+                    <h5 class="card-title">secondary  card title</h5>
+                    <p class="card-text text-white"> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem maiores temporibus tempore vel nobis accusamus laudantium quam. Recusandae ipsam reprehenderit eius, obcaecati, facere doloribus illum sint accusantium vero consequatur sed!
+Dolores voluptatum aut ratione consequuntur amet aspernatur, fuga nisi, pariatur deleniti blanditiis maiores! Expedita natus ratione ipsam eaque, voluptatem consequuntur eligendi fugit reiciendis aperiam iure, quia eius dolores iste amet!
+Id culpa iusto ratione, quod quasi officiis architecto perferendis expedita at nostrum beatae eius amet, praesentium pariatur eaque tenetur? Quis harum odit perferendis beatae iure impedit inventore praesentium culpa neque.</p>
+                </div>
+            <div class="card-footer footer-indigo">
+            <img style="display:inline;" src="{{ asset('images/add_comment_white.png')}}" width=24 height=24>
+            <img style="display:inline;" src="{{ asset('images/mode_edit_white.png')}}" width=24 height=24>
+            <img style="display:inline;" src="{{ asset('images/visibility_white.png')}}" width=24 height=24>
+
+            </div>
+        </div>
+
+    {% elseif class_ == 1 %}
+
+     <div class="mydiv border-end border-bottom border-danger border-3 text-white mb-4">
+            <div class="card-header border-danger ">Last modified : 42 seconds ago...</div>
+                <div class="card-body text-danger ">
+                    <h5 class="card-title">danger  card title</h5>
+                    <p class="card-text text-white">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem maiores temporibus tempore vel nobis accusamus laudantium quam. Recusandae ipsam reprehenderit eius, obcaecati, facere doloribus illum sint accusantium vero consequatur sed!
+Dolores voluptatum aut ratione consequuntur amet aspernatur, fuga nisi, pariatur deleniti blanditiis maiores! Expedita natus ratione ipsam eaque, voluptatem consequuntur eligendi fugit reiciendis aperiam iure, quia eius dolores iste amet!
+Id culpa iusto ratione, quod quasi officiis architecto perferendis expedita at nostrum beatae eius amet, praesentium pariatur eaque tenetur? Quis harum odit perferendis beatae iure impedit inventore praesentium culpa neque.
+                    </p>
+
+                </div>
+            <div class="card-footer border-danger ">
+            <img style="display:inline;" src="{{ asset('images/add_comment_white.png')}}" width=24 height=24>
+            <img style="display:inline;" src="{{ asset('images/mode_edit_white.png')}}" width=24 height=24>
+            <img style="display:inline;" src="{{ asset('images/visibility_white.png')}}" width=24 height=24>
+
+            </div>
+        </div>
+
+    {% elseif class_ == 2 %}
+     <div class="mydiv border-end border-bottom border-warning border-3 text-white mb-4" >
+            <div class="card-header border-warning">Last modified : 42 seconds ago...</div>
+                <div class="card-body text-warning">
+                    <h5 class="card-title">warning card title</h5>
+                    <p class="card-text text-white"> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem maiores temporibus tempore vel nobis accusamus laudantium quam. Recusandae ipsam reprehenderit eius, obcaecati, facere doloribus illum sint accusantium vero consequatur sed!
+Dolores voluptatum aut ratione consequuntur amet aspernatur, fuga nisi, pariatur deleniti blanditiis maiores! Expedita natus ratione ipsam eaque, voluptatem consequuntur eligendi fugit reiciendis aperiam iure, quia eius dolores iste amet!
+Id culpa iusto ratione, quod quasi officiis architecto perferendis expedita at nostrum beatae eius amet, praesentium pariatur eaque tenetur? Quis harum odit perferendis beatae iure impedit inventore praesentium culpa neque.</p>
+                </div>
+            <div class="card-footer border-warning">
+            <img style="display:inline;" src="{{ asset('images/add_comment_white.png')}}" width=24 height=24>
+            <img style="display:inline;" src="{{ asset('images/mode_edit_white.png')}}" width=24 height=24>
+            <img style="display:inline;" src="{{ asset('images/visibility_white.png')}}" width=24 height=24>
+
+            </div>
+        </div>
+        {% elseif class_ == 3 %}
+
+
+        <div class="mydiv border-end border-bottom border-info border-3 text-white mb-4">
+            <div class="card-header border-info">Last modified : 42 seconds ago...</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">info card title</h5>
+                    <p class="card-text text-white"> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem maiores temporibus tempore vel nobis accusamus laudantium quam. Recusandae ipsam reprehenderit eius, obcaecati, facere doloribus illum sint accusantium vero consequatur sed!
+Dolores voluptatum aut ratione consequuntur amet aspernatur, fuga nisi, pariatur deleniti blanditiis maiores! Expedita natus ratione ipsam eaque, voluptatem consequuntur eligendi fugit reiciendis aperiam iure, quia eius dolores iste amet!
+Id culpa iusto ratione, quod quasi officiis architecto perferendis expedita at nostrum beatae eius amet, praesentium pariatur eaque tenetur? Quis harum odit perferendis beatae iure impedit inventore praesentium culpa neque.</p>
+                </div>
+            <div class="card-footer border-info">
+                <img style="display:inline;" src="{{ asset('images/add_comment_white.png')}}" width=24 height=24>
+                <img style="display:inline;" src="{{ asset('images/mode_edit_white.png')}}" width=24 height=24>
+                 <img style="display:inline;" src="{{ asset('images/visibility_white.png')}}" width=24 height=24>
+        </div>
+</div>
+    {% endif %}
+{% endfor %}
+   {% endfor %}
+</div>
+</div>
+{% endblock %}

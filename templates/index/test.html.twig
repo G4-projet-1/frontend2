@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+
+{# 
+ Appliquer les fonctions à chaque bouton
+ Changer le shadow en cas d'erreur
+ Faire la prévisualisation
+ Ajouter le nom de l'utilisateur
+#}
+
+
+{% block title %}Fiche Form !{% endblock %}
+{% form_theme formFiche 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+
+{% for item in customer %}
+{{ item }}
+{% endblock %}

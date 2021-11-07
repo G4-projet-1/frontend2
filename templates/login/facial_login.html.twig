@@ -1,0 +1,609 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceuil{% endblock %}
+
+{% block body %}  
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <!-- <script src="face_mesh.js"></script> -->
+</head>
+
+<body>
+    <div class="" style="position:absolute; top:100px; left:0px;">
+        <video class="input_video" style="visibility: hidden;"></video>
+        <canvas class="output_canvas" width="640px" height="480px"></canvas>
+        <div class="person" style="margin-left: 60%;"><span id="person" style="font-size:50px; text-align: center;">Person</span></div>
+    </div>
+    <script type="module">
+        const videoElement = document.getElementsByClassName('input_video')[0];
+        const canvasElement = document.getElementsByClassName('output_canvas')[0];
+        var canvasCtx = canvasElement.getContext('2d');
+
+
+        function dot_links(CanvasCtx, dot1, dot2) {
+            // set line stroke and line width
+            CanvasCtx.strokeStyle = 'red';
+            CanvasCtx.lineWidth = 1;
+
+            // draw a red line
+            CanvasCtx.beginPath();
+            CanvasCtx.moveTo(dot1[0], dot1[1]);
+            CanvasCtx.lineTo(dot2[0], dot2[1]);
+            CanvasCtx.stroke();
+            return CanvasCtx;
+        }
+
+        function distance(pt1_, pt2_) {
+            /* get the distance between two points*/
+            var pt1 = [parseInt(pt1_.x * 1280, 10), parseInt(pt1_.y * 720, 10)];
+            var pt2 = [parseInt(pt2_.x * 1280, 10), parseInt(pt2_.y * 720, 10)];
+            var distance = Math.sqrt((Math.pow(pt1[0] - pt2[0], 2)) + (Math.pow(pt1[1] - pt2[1], 2)))
+            return distance;
+        }
+
+        function get_ratio(dist1, dist2) {
+            return dist1 / dist2;
+        }
+        function RoundTo(value_to_be_rounded, number_of_decimals) {
+            /* round decimal value with n digits */
+            var val = Math.pow(10, number_of_decimals)
+            var rounded_value = Math.round(value_to_be_rounded * val) / val
+            return rounded_value
+        }
+
+        function normalize_distance(src_as_one, value_to_norm) {
+            /* normalize a distance from a choosen source */
+            return value_to_norm / src_as_one;
+        }
+
+
+
+
+        function normed_distance(pt1, pt2, src_to_norm_from, round_at = -1) {
+            /* get the distance between two points as a normalized value 
+            from a choosen source */
+            var dist = distance(pt1, pt2);
+            var normed_val = normalize_distance(src_to_norm_from, dist);
+            if (round_at > 0) {
+                normed_val = RoundTo(normed_val, round_at)
+            }
+            return normed_val;
+        }
+
+
+        var melenchon = {
+                        "name":"Mélenchon",
+                        "sourcil_left": 0.39,
+                        "sourcil_right": 0.3,
+                        "nose_width": 0.35,
+                        "nose_height": 0.22,
+                        "up_chin_width": 0.75,
+                        "sourcil_gap": 0.25,
+                        "eyes_gap": 0.28,
+                        "horizontal": 1.12,
+                        "base_nose_to_chin": 0.45,
+                        "mouth_width": 0.61
+                    }
+                    
+        var lepen = {
+        "name":"Lepen",
+        "sourcil_left": 0.38,
+        "sourcil_right": 0.32,
+        "nose_width": 0.36,
+        "nose_height": 0.27,
+        "up_chin_width": 0.75,
+        "sourcil_gap": 0.24,
+        "eyes_gap": 0.28,
+        "horizontal": 1.09,
+        "base_nose_to_chin": 0.4,
+        "mouth_width": 0.6
+    }
+
+                   
+    var face_obj_femme3 = {
+        "name":"Femme",
+        "sourcil_left": 0.38,
+        "sourcil_right": 0.25,
+        "nose_width": 0.28,
+        "nose_height": 0.28,
+        "up_chin_width": 0.57,
+        "sourcil_gap": 0.2,
+        "eyes_gap": 0.24,
+        "horizontal": 0.25,
+        "base_nose_to_chin":0.30,
+        "mouth_width":0.41
+        }
+
+        var moi = {
+            "name":"Julien Faujanet",
+            "sourcil_left": 0.33,
+            "sourcil_right": 0.31,
+            "nose_width": 0.31,
+            "nose_height": 0.27,
+            "up_chin_width": 0.66,
+            "sourcil_gap": 0.21,
+            "eyes_gap": 0.26,
+            "horizontal": 0.94,
+            "base_nose_to_chin": 0.38,
+            "mouth_width": 0.48
+        }
+
+        var lionel_astier = {
+                    "name":"lionel astier",
+                    "sourcil_left": 0.27,
+                    "sourcil_right": 0.29,
+                    "nose_width": 0.31,
+                    "nose_height": 0.26,
+                    "up_chin_width": 0.66,
+                    "sourcil_gap": 0.17,
+                    "eyes_gap": 0.22,
+                    "horizontal": 0.88,
+                    "base_nose_to_chin": 0.41,
+                    "mouth_width": 0.49
+                }
+    
+                var macron = {
+                "name":"Macron",                    
+                "sourcil_left": 0.33,
+                "sourcil_right": 0.34,
+                "nose_width": 0.33,
+                "nose_height": 0.26,
+                "up_chin_width": 0.68,
+                "sourcil_gap": 0.19,
+                "eyes_gap": 0.22,
+                "horizontal": 1.02,
+                "base_nose_to_chin": 0.38,
+                "mouth_width": 0.57
+            }
+
+            var bogdanov = {
+                "name":"Bogdanov",
+                "sourcil_left": 0.25,
+                "sourcil_right": 0.33,
+                "nose_width": 0.32,
+                "nose_height": 0.26,
+                "up_chin_width": 0.64,
+                "sourcil_gap": 0.17,
+                "eyes_gap": 0.22,
+                "horizontal": 0.92,
+                "base_nose_to_chin": 0.4,
+                "mouth_width": 0.52
+            }
+
+        var my_users = [melenchon, lepen, face_obj_femme3, moi, lionel_astier, macron, bogdanov]
+
+        function compareTwoFaces(face_obj1, face_obj2) {
+            var obj_attrs = ["sourcil_left","sourcil_right","nose_width","nose_height","up_chin_width","sourcil_gap","eyes_gap","horizontal", "base_nose_to_chin", "mouth_width"];
+            var diff = 0
+            var div = 100
+            var obj1 = face_obj1;
+            var obj2 = face_obj2;
+
+            var my_res = {
+                        "sourcil_left": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "sourcil_right":{
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "nose_width": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "nose_height": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "up_chin_width": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "sourcil_gap": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "eyes_gap": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "horizontal": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        
+                        "base_nose_to_chin": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        "mouth_width": {
+                            "distance": 0,
+                            "points": [],
+                            "color_points": "red"
+                        },
+                        
+                        
+                    }
+            for(let item of obj_attrs)
+            {
+            //for (var i = 0; i < items1.length; ++i) {
+       
+                var val1 = obj1[item]
+                var val2 = obj2[item]
+                  
+                    var attr_dist = Math.pow(Math.abs(val1["distance"]-val2)+1,70);
+                    my_res[item]["distance"] = attr_dist
+                    my_res[item]["points"] = val1["points"]
+                    if(attr_dist< 5.0){
+                        my_res[item]["color_points"] = "green"
+                    }
+                    else if (attr_dist >= 5.0 && attr_dist < 10.0){
+                        my_res[item]["color_points"] = "orange"
+                    }
+                    else{
+                        my_res[item]["color_points"] = "red"
+                    }
+                    diff+=attr_dist
+                    
+                }
+               
+                console.log(my_res," -> match at ",diff);
+                return [diff, my_res];
+            }
+        
+
+
+
+
+
+
+
+        function get_previous_in_local_storage(value_name) {
+            try {
+                return JSON.parse(localStorage.getItem(value_name));
+            } catch (error) {
+                return 0;
+            }
+
+        }
+        function set_previous_in_local_storage(value_name, value) {
+            localStorage.setItem(value_name, JSON.stringify(value));
+        }
+
+
+
+        
+        
+        function compareAllFaces(current_face, all_my_faces){
+            var current_score = 0;
+            var current_user_data = {};
+            var current_user = {};
+            var best_user = {};
+            var lowest_score = 100;
+            var obj_attrs = ["sourcil_left","sourcil_right","nose_width","nose_height","up_chin_width","sourcil_gap","eyes_gap","horizontal", "base_nose_to_chin", "mouth_width"];
+            var best_match = "Recalcul en cours...";
+            var ColorPoints = {
+                "green": [],
+                "orange": [],
+                "red": []
+            };
+            var all_points = [];
+
+            for(let user of all_my_faces){
+                current_user_data = compareTwoFaces(current_face, user);
+                current_score = current_user_data[0];
+                current_user = current_user_data[1];
+                //console.log("user : ", user["name"],"score : ", current_score)
+                if (lowest_score>current_score){
+                    lowest_score = current_score;
+                    best_match = user['name'];
+                    best_user = current_user;
+                    
+                }
+            }
+            console.log("best match = ", best_match);
+            for(let descript of obj_attrs){
+                        console.log("descript : ", current_user);
+
+                        var points = current_user[descript]["points"]
+                        var color = current_user[descript]["color_points"]
+                        console.log("color : ", color, "points : ", points);
+                        ColorPoints[color].push(...points);
+
+                    }
+
+            var name_person = document.getElementById("person")
+            name_person.innerText = best_match;
+            //console.log("ColorPoints : ",ColorPoints)
+            return ColorPoints;
+
+        }
+
+
+
+
+        var distance_obj = [0, 0];
+        function onResults(results) {
+            var unit_to_round1 = 1
+            var unit_to_round = 4
+            let previous_ratio_ = 0
+            let ratio_ = 0
+            var previous_vertical_distance =0;
+            let vertical_distance = 0
+            var previous_horizontal_distance = 0;
+            let horizontal_distance = 0
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(
+                results.image, 0, 0, canvasElement.width, canvasElement.height);
+            if (results.multiFaceLandmarks) {
+
+                const drawLandmarksOptionsGreen = { lineWidth: 1, color: 'green' }
+                const drawLandmarksOptionsOrange = { lineWidth: 1, color: 'orange' }
+                const drawLandmarksOptionsRed = { lineWidth: 1, color: 'red' }
+                var my_landmarks = [];
+                var my_landmarks2 = [];
+                var my_general_pointsGreen = []
+                var my_general_pointsOrange = []
+                var my_general_pointsRed = []
+
+
+
+
+                for (const landmarks of results.multiFaceLandmarks) {
+                    //console.log(landmarks);
+                    var nb = 1;
+                    var front = landmarks[10];
+                    var menton = landmarks[152];
+                    var left_extrema = landmarks[123];
+                    var right_extrema = landmarks[352];
+                    var nez_left = landmarks[48];
+                    var nez_right = landmarks[294];
+                    var sourcil_left_out = landmarks[46]
+                    var sourcil_left_in = landmarks[55]
+                    var sourcil_right_out = landmarks[276]
+                    var sourcil_right_in = landmarks[285]
+                    var machoire_right_up = landmarks[365]
+                    var machoire_right_down = landmarks[378]
+                    var machoire_left_up = landmarks[150]
+                    var machoire_left_down = landmarks[176]
+                    var left_eye_top_middle = landmarks[27]
+                    var left_eye_out = landmarks[130]
+                    var left_eye_in = landmarks[243]
+                    var right_eye_top_middle = landmarks[257]
+                    var right_eye_out = landmarks[359]
+                    var right_eye_in = landmarks[463]
+                    var nose_top = landmarks[6]
+                    var nose_bottom = landmarks[2]
+                    var mouth_left = landmarks[57]
+                    var mouth_right = landmarks[287]
+                    var mouth_bottom = landmarks[82]
+                    var mouth_top = landmarks[310]
+                    
+
+                    /*
+                    for (let landmark_pt of landmarks) {
+                        if (nb % 11 == 0) {
+                            if (nb % 4 == 0) {
+                                //console.log(landmark_pt);
+                                my_landmarks2.push(landmark_pt)
+                                //canvasCtx = dot_links(canvasCtx, landmark_pt, my_landmarks.pop())
+
+                            }
+                            else {
+                                //console.log(landmark_pt);
+                                my_landmarks.push(landmark_pt)
+                                //canvasCtx = dot_links(canvasCtx, landmark_pt, my_landmarks.pop())
+                            }
+
+                        }
+
+                        nb++;
+                    }
+
+
+*/
+
+
+                    
+
+                    // Vertical distance
+                    vertical_distance = RoundTo(distance(front, menton), unit_to_round);
+                    if (vertical_distance != previous_vertical_distance) {
+                        //console.log("gap vertical distance : ", vertical_distance)
+                        previous_vertical_distance = vertical_distance;
+                        vertical_distance = RoundTo(distance(front, menton), unit_to_round);
+                    }
+
+
+
+                    // Horizontal distance
+                    var horizontal_distance_ = RoundTo(distance(left_extrema, right_extrema), unit_to_round);
+                    horizontal_distance = normalize_distance(vertical_distance, horizontal_distance_)
+                    if (horizontal_distance != previous_horizontal_distance) {
+                        //console.log("gap horizontal distance : ", horizontal_distance)
+                        previous_horizontal_distance = horizontal_distance;
+                        horizontal_distance_ = RoundTo(distance(left_extrema, right_extrema), unit_to_round);
+                        horizontal_distance = normalize_distance(vertical_distance, horizontal_distance_)
+                    }
+
+                    // Ratio
+                    if (horizontal_distance > 0 && vertical_distance > 0 && ratio_ == 0) {
+                        ratio_ = RoundTo(get_ratio(vertical_distance, horizontal_distance), unit_to_round);
+                        if (previous_ratio_ == 0) {
+                            previous_ratio_ = ratio_
+                        }
+                    }
+                    else if (ratio_ != previous_ratio_) {
+                        previous_ratio_ = ratio_
+                        ratio_ = RoundTo(get_ratio(vertical_distance, horizontal_distance), unit_to_round);
+                    }
+
+                
+                    var ratio_distances2 = {
+                        "sourcil_left": normed_distance(sourcil_left_in, sourcil_left_out, vertical_distance, 2),
+                        "sourcil_right": normed_distance(sourcil_right_in, sourcil_right_out, vertical_distance, 2),
+                        "nose_width": normed_distance(nez_left, nez_right, vertical_distance, 2),
+                        "nose_height": normed_distance(nose_top, nose_bottom, vertical_distance, 2),
+                        "up_chin_width": normed_distance(machoire_left_up, machoire_right_up, vertical_distance, 2),
+                        "sourcil_gap": normed_distance(sourcil_left_in, sourcil_right_in, vertical_distance, 2),
+                        "eyes_gap": normed_distance(left_eye_in, right_eye_in, vertical_distance, 2),
+                        "horizontal": normed_distance(left_extrema, right_extrema, vertical_distance, 2),
+                        "base_nose_to_chin": normed_distance(nose_bottom, menton, vertical_distance, 2),
+                        "mouth_width": normed_distance(mouth_left, mouth_right, vertical_distance, 2),
+                    }
+
+                    var ratio_distances = {
+                        "sourcil_left": {
+                            "distance": normed_distance(sourcil_left_in, sourcil_left_out, vertical_distance, 2),
+                            "points": [sourcil_left_in, sourcil_left_out],
+                            "score_diff": 0
+                        },
+                        "sourcil_right":{
+                            "distance": normed_distance(sourcil_right_in, sourcil_right_out, vertical_distance, 2),
+                            "points": [sourcil_right_in, sourcil_right_out],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "nose_width": {
+                            "distance": normed_distance(nez_left, nez_right, vertical_distance, 2),
+                            "points": [nez_left, nez_right],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "nose_height": {
+                            "distance": normed_distance(nose_top, nose_bottom, vertical_distance, 2),
+                            "points": [nose_top, nose_bottom],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "up_chin_width": {
+                            "distance": normed_distance(machoire_left_up, machoire_right_up, vertical_distance, 2),
+                            "points": [machoire_left_up, machoire_right_up],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "sourcil_gap": {
+                            "distance": normed_distance(sourcil_left_in, sourcil_right_in, vertical_distance, 2),
+                            "points": [sourcil_left_in, sourcil_right_in],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "eyes_gap": {
+                            "distance": normed_distance(left_eye_in, right_eye_in, vertical_distance, 2),
+                            "points": [left_eye_in, right_eye_in],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "horizontal": {
+                            "distance": normed_distance(left_extrema, right_extrema, vertical_distance, 2),
+                            "points": [left_extrema, right_extrema],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "base_nose_to_chin": {
+                            "distance": normed_distance(nose_bottom, menton, vertical_distance, 2),
+                            "points": [nose_bottom, menton],
+                            "score_diff": 0
+                        },
+                        
+                        
+                        "mouth_width": {
+                            "distance": normed_distance(mouth_left, mouth_right, vertical_distance, 2),
+                            "points": [mouth_left, mouth_right],
+                            "score_diff": 0
+                        },
+                        
+                        
+                    }
+
+                    var ColorPoints = compareAllFaces(ratio_distances, my_users);
+
+                    console.log("ColorPoints : ",ColorPoints)
+
+                    /*
+                    my_general_pointsGreen = [front, menton, left_extrema, right_extrema, nez_left, nez_right];
+                    my_general_pointsOrange = [left_eye_top_middle, left_eye_out, left_eye_in, right_eye_top_middle, right_eye_in, right_eye_out, nose_top, nose_bottom,
+                        sourcil_left_out, sourcil_left_in, sourcil_right_out, sourcil_right_in, machoire_left_up, machoire_left_down, machoire_right_up, machoire_right_down,
+                        mouth_left, mouth_right 
+                    ];
+                    my_general_pointsRed = [];
+                    */
+
+
+                    
+                    ColorPoints["green"].push(front);
+                    drawLandmarks(canvasCtx, ColorPoints["green"], drawLandmarksOptionsGreen);
+                    drawLandmarks(canvasCtx, ColorPoints["orange"], drawLandmarksOptionsOrange);
+                    drawLandmarks(canvasCtx, ColorPoints["red"], drawLandmarksOptionsRed);
+
+                   
+                    console.log("ratios : ", ratio_distances);
+
+
+                }
+            }
+            canvasCtx.restore();
+            
+        }
+
+        const faceMesh = new FaceMesh({
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+            }
+        });
+        faceMesh.setOptions({
+            maxNumFaces: 1,
+            refineLandmarks: true,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+        faceMesh.onResults(onResults);
+        //console.log("dist obj : ", distance_obj);
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await faceMesh.send({ image: videoElement });
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
+{% endblock %}

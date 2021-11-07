@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+
+{# 
+ Appliquer les fonctions à chaque bouton
+ Changer le shadow en cas d'erreur
+ Faire la prévisualisation
+ Ajouter le nom de l'utilisateur
+#}
+
+
+{% block title %}Fiche Preview !{% endblock %}
+{% block body %}
+<style>
+    .text_tool{display: inline; border:1px solid white; padding:1px; background-color:white;}
+    .text_tool:hover{background-color:grey;}
+    .text_tool * {display: inline;}
+    .form_item{background-color:#343638; color:white;}
+    .form_item .categorie{}
+    .fiche_form { padding: 70px; margin: 1em auto; max-width: 100%; width: 95%; font: 18px/1.5 sans-serif; 
+    border : 1px solid black; border-radius:10px; background-color:#343638; color:white; box-shadow: 10px 8px 8px -1px rgba(97,242,217,0.9);}
+    .fiche_form code { background: #F5F5F5; padding: 2px 6px; }
+    .fiche_form button{ margin-top:10px; margin-bottom:50px; float:right;}
+    .save_btn{color:#fff;background-color:#343638;border-color:#969696;}
+      .save_btn:hover {
+    color: #0d6efd;
+    border-color: #0d6efd;
+  }
+</style>
+
+<h1>Rendu de votre fiche</h1>
+
+<div class="fiche_form">
+<div class="row" style="float:right;">
+  <span class="" >par {{ app.user.pseudo }}</span>
+</div>
+    <div class="row">
+    <div class="tool_box col-md-6">
+    <div class="text_tool col"><a onclick="bold_it()" href="#"><img src="{{ asset('images/bold_black.png') }}" width=24 height=24></a></div>
+    <div class="text_tool col"><a onclick="italic_it()" href="#"><img src="{{ asset('images/italic_black.png') }}" width=24 height=24></a></div>
+    <div class="text_tool col"><a onclick="insert_pic()" href="#"><img src="{{ asset('images/photo_black.png') }}" width=24 height=24></a></div>
+    <div class="text_tool col"><a onclick="insert_vid()" href="#"><img src="{{ asset('images/movie_black.png') }}" width=24 height=24></a></div>
+    <div class="text_tool col"><a onclick="paragraph_it()" href="#"><img src="{{ asset('images/block_black.png') }}" width=24 height=24></a></div>
+    <div class="text_tool col"><a id="render_view" onclick="render()" href="#"><img src="{{ asset('images/play_arrow_black.png') }}" width=24 height=24></a></div>
+    </div>
+    </div>
+{{ contenu }}
+
+<div class="form_item">
+    <i class="fiche title"></i> 
+  
+</div>
+
+
+
+<div class="form_item contenu">
+    <i class="fiche"></i> 
+  
+</div>
+<script>
+
+
+</script>
+
+{% endblock %}
+
