@@ -15,7 +15,7 @@
 
         {% block javascripts %}
         <script src="{{ asset('js/JQuery3.6.js') }}"></script>
-       <script src="{{ asset('js/my_js.js') }}"></script>
+       <script src="{{ asset('js/myjs.js') }}"></script>
             {#{{ encore_entry_script_tags('app') }}#}
         {% endblock %}
     </head>
@@ -76,7 +76,7 @@
 
               <input  class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
               <!-- <button id="search_btn_id" class="btn search_btn" type="submit" >Search</button> -->
-              <a href="{{ path("search") }}" ><button id="search_btn_id" class="btn search_btn" >Search</button></a>
+              <a id="search_btn_id" class="btn search_btn" href="{{ path("search") }}">Search</a>
             </form>
           </div>
         </div>

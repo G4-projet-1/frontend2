@@ -1,68 +1,83 @@
+{% extends 'base.html.twig' %}
 
 
-{% block title %}Hello SearchController!{% endblock %}
-
+{% block title %}Search Form !{% endblock %}
+{% form_theme formFiche 'bootstrap_4_layout.html.twig' %}
 {% block body %}
 <style>
-   
+    .text_tool{display: inline; border:1px solid white; padding:1px; background-color:white;}
+    .text_tool:hover{background-color:grey;}
+    .text_tool * {display: inline;}
+    .form_item{background-color:#343638; color:white;}
+    .form_item .categorie{}
+    .fiche_form { padding: 70px; margin: 1em auto; max-width: 100%; width: 95%; font: 18px/1.5 sans-serif; 
+    border : 1px solid black; border-radius:10px; background-color:#343638; color:white; box-shadow: 10px 8px 8px -1px rgba(97,242,217,0.9);}
+    .fiche_form code { background: #F5F5F5; padding: 2px 6px; }
+    .fiche_form button{ margin-top:10px; margin-bottom:50px; float:right;}
+    .save_btn{color:#fff;background-color:#343638;border-color:#969696;}
+      .save_btn:hover {
+    color: #0d6efd;
+    border-color: #0d6efd;
+  }
 </style>
 
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark" style="height:400px;">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#"> <img src="{{ asset('images/logo.png') }}" alt="Logo Wikibrain" width="180" height="48"/></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" 
-          aria-label="Toggle navigation" >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                
-                <a class="nav-link active" aria-current="page" href="{{ path("index") }}">
-                  Home
-                </a>
-              </li>
-              {# <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{ path("inscription") }}">S'inscrire</a>
-              </li> #}
-              <li class="nav-item">
-              {%if app.user %}
-                <a class="nav-link" href="{{ path("logout") }}">Logout</a>
-                {% else %}
-                <a class="nav-link" href="{{ path("login") }}">Login</a>
-                {% endif %}
-              </li>
-            
-              {% if app.user %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ path("fiche_create") }}" tabindex="-1" aria-disabled="false">Créer fiche</a>
-              </li>
-              {% endif %}
-            </ul>
-            <form class="d-flex">
+<h1>Créez une nouvelle fiche</h1>
 
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0 search_menu">
-                <li class="nav-item">
-                  
-                  <a class="nav-link" aria-current="page" href="index.html">
-                     Trier 
-                  </a>
-                </li>
+<div class="fiche_form">
+<div class="row" style="float:right;">
+  <span class="" ></span>
 
-                <li class="nav-item">
-                  
-                  <a class="nav-link" aria-current="page" href="index.html">
-                     Categories 
-                  </a>
-                </li>
+ {{ form_start(formFiche) }}
 
-                </ul>
+<div class="form_item">
+    <i class="fiche title"></i> 
+    {{ form_label(formFiche.titre) }}
+    {{ form_widget(formFiche.titre) }}
 
-              <input  class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <a href="" ><button id="search_btn_id" class="btn search_btn" type="submit" >Search</button></a>
-            </form>
-          </div>
-        </div>
-      </nav>
+    <small>{{ form_help(formFiche.titre) }}</small>
+
+    <div class="form-error">
+        {{ form_errors(formFiche.titre) }}
+    </div>
+</div>
+
+<div class="form_item categorie col-md-6">
+    <i class="fiche categorie"></i> 
+    {{ form_label(formFiche.categorie) }}
+    {{ form_widget(formFiche.categorie) }}
+
+    <small>{{ form_help(formFiche.categorie) }}</small>
+
+    <div class="form-error">
+        {{ form_errors(formFiche.categorie) }}
+    </div>
+</div>
+
+
+
+<div class="form_item contenu">
+    <i class="fiche"></i> 
+    {{ form_label(formFiche.contenu) }}
+    {{ form_widget(formFiche.contenu, {'attr': {'class': 'contenu_field'}}) }}
+
+    <small>{{ form_help(formFiche.contenu) }}</small>
+
+    <div class="form-error">
+        {{ form_errors(formFiche.contenu) }}
+    </div>
+</div>
+
+    {{ form(formFiche) }}
+     {{ form_end(formFiche) }}
 {% endblock %}
+
+
+{# 
+- Faire les fixtures
+- Faire le form search
+- Finir le form fiche
+- Faire le form commentaire
+- Faire récup des commentaires
+- Faire les roles
+
+ #}
