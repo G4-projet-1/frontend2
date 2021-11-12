@@ -60,7 +60,7 @@ class FicheController extends AbstractController
             'attr' => ['class' => 'contenu_field',
                         'rows' => 50],
         ])
-    
+     
         ->add('save', SubmitType::class, [
             "attr" => [
                 "class"=>"save_btn"
