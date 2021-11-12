@@ -21,6 +21,9 @@ class SearchController extends AbstractController
     public function search(Request $request, EntityManagerInterface $manager): Response
     {
         $fiche = new Fiche();
+        $categorie = new Categorie();
+        
+        $form_cat = $this->createFormBuilder($categorie);
        
         $form = $this->createFormBuilder($fiche)
         ->add('titre')
